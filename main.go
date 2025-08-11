@@ -56,7 +56,7 @@ func main() {
 	}
 
 	if *dryRun {
-		fmt.Println("\nDry run completed. Use without --dry-run to execute.")
+		fmt.Println("\nDry run completed. Use without -dry-run to execute.")
 	} else {
 		fmt.Println("\nAll templates processed successfully.")
 	}
@@ -84,6 +84,6 @@ func printUsage() {
 	fmt.Println("\nOptions:")
 	flag.PrintDefaults()
 	fmt.Println("\nExample:")
-	fmt.Println("  boilerplate-compose -f my-compose.yaml --verbose")
-	fmt.Println("  boilerplate-compose --dry-run")
+	fmt.Println("  boilerplate-compose -f my-compose.yaml -verbose")
+	fmt.Println("  boilerplate-compose -dry-run")
 }

@@ -51,6 +51,8 @@ just test-complex
 ./boilerplate-compose -verbose
 ```
 
+**Note**: CLI flags use single dash (`-`) syntax, which is the default for Go flag package.
+
 ## Architecture
 
 The codebase follows a clean modular architecture:
