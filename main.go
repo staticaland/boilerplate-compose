@@ -7,12 +7,14 @@ import (
 	"os"
 
 	"boilerplate-compose/config"
+	"boilerplate-compose/processor"
 )
 
 var (
 	configFile = flag.String("f", "", "Path to compose file")
 	version    = flag.Bool("version", false, "Show version")
 	help       = flag.Bool("help", false, "Show help")
+	dryRun     = flag.Bool("dry-run", false, "Show what would be executed without running")
 )
 
 func main() {
@@ -38,10 +40,17 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	fmt.Printf("Loaded config from: %s\n", configPath)
-	fmt.Printf("Found %d templates:\n", len(cfg.Templates))
-	for name, template := range cfg.Templates {
-		fmt.Printf("  - %s: %s -> %s\n", name, template.TemplateURL, template.OutputFolder)
+	templateProcessor := processor.NewTemplateProcessor(cfg)
+	orchestrator := processor.NewOrchestrator(templateProcessor, *dryRun)
+
+	if err := orchestrator.Process(); err != nil {
+		log.Fatalf("Processing failed: %v", err)
+	}
+
+	if *dryRun {
+		fmt.Println("\nDry run completed. Use without --dry-run to execute.")
+	} else {
+		fmt.Println("All templates processed successfully.")
 	}
 }
 

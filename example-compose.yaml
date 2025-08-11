@@ -1,0 +1,27 @@
+# example-compose.yaml
+templates:
+  frontend:
+    template-url: "https://github.com/example/react-template"
+    output-folder: "./frontend"
+    vars:
+      project_name: "my-react-app"
+      author: "john-doe"
+      version: "1.0.0"
+    non-interactive: true
+    missing-key-action: "zero"
+
+  backend:
+    template-url: "https://github.com/example/go-api-template"
+    output-folder: "./backend"
+    var-file:
+      - "common-vars.yaml"
+      - "backend-vars.yaml"
+    no-hooks: true
+    missing-config-action: "ignore"
+
+  docs:
+    template-url: "./templates/docs"
+    output-folder: "./documentation"
+    vars:
+      project_name: "my-project"
+    disable-dependency-prompt: true
