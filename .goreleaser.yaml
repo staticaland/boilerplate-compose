@@ -1,0 +1,15 @@
+builds:
+  - goos:
+      - darwin
+      - linux
+
+homebrew_casks:
+  - repository:
+      owner: staticaland
+      name: boilerplate-compose
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/boilerplate-compose"]
+          end
