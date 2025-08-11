@@ -1,0 +1,4 @@
+templates:
+  demo:
+    template_url: ./templates
+    output_folder: ./out
