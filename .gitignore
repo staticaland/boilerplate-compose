@@ -32,3 +32,7 @@ go.work.sum
 # .vscode/
 
 boilerplate-compose
+
+# Test output directory
+tests/output/
+output

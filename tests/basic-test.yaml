@@ -1,11 +1,11 @@
 version: "1.0"
 
 templates:
-  website:
+  simple-website:
     template-url: "git@github.com:gruntwork-io/boilerplate.git//examples/for-learning-and-testing/website?ref=main"
-    output-folder: "./generated-website"
+    output-folder: "./output/simple-website"
     non-interactive: true
     vars:
-      Title: "My Awesome Website"
-      WelcomeText: "Welcome to my website!"
-      ShowLogo: "true"
+      Title: "Test Website"
+      WelcomeText: "This is a test!"
+      ShowLogo: "false"

@@ -89,9 +89,13 @@ func (e *CliExecutor) streamOutput(reader io.Reader, prefix string, templateName
 }
 
 func (e *CliExecutor) CheckBoilerplateAvailable() error {
-	cmd := exec.Command(e.boilerplatePath, "--version")
+	path := e.boilerplatePath
+	if path == "" {
+		path = "boilerplate" // Default to PATH lookup
+	}
+	cmd := exec.Command(path, "--version")
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("boilerplate CLI not found at '%s': %w", e.boilerplatePath, err)
+		return fmt.Errorf("boilerplate CLI not found at '%s': %w", path, err)
 	}
 	return nil
 }

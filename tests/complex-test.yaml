@@ -1,0 +1,20 @@
+version: "1.0"
+
+templates:
+  website-with-logo:
+    template-url: "git@github.com:gruntwork-io/boilerplate.git//examples/for-learning-and-testing/website?ref=main"
+    output-folder: "./output/website-with-logo"
+    non-interactive: true
+    vars:
+      Title: "Complex Test Website"
+      WelcomeText: "Welcome to the complex test!"
+      ShowLogo: "true"
+
+  minimal-website:
+    template-url: "git@github.com:gruntwork-io/boilerplate.git//examples/for-learning-and-testing/website?ref=main"
+    output-folder: "./output/minimal-website"
+    non-interactive: true
+    vars:
+      Title: "Minimal Test"
+      WelcomeText: "Just the basics"
+      ShowLogo: "false"
