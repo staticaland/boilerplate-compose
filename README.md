@@ -6,9 +6,17 @@ A CLI tool for composing multiple boilerplate templates into a single project se
 
 - **YAML Configuration**: Define multiple templates in a single configuration file
 - **Template Variables**: Support for template variables and variable files
+- **Real Execution**: Execute boilerplate CLI with streaming output and error handling
+- **Dry Run Mode**: Preview commands without executing them
+- **Execution Reporting**: Detailed execution summaries with timing and success/failure counts
 - **Flexible Configuration**: Support for includes, extends, and various template options
 - **Validation**: Built-in configuration validation with clear error messages
 - **Auto-discovery**: Automatically finds `boilerplate-compose.yaml` or `boilerplate-compose.yml` files
+
+## Prerequisites
+
+- Go 1.19 or later
+- [Boilerplate CLI](https://github.com/gruntwork-io/boilerplate) installed and available in PATH
 
 ## Installation
 
@@ -27,12 +35,30 @@ go build -o boilerplate-compose
 # Specify a config file
 ./boilerplate-compose -f my-compose.yaml
 
+# Dry run - preview commands without executing
+./boilerplate-compose --dry-run
+
+# Verbose output - show detailed boilerplate CLI output
+./boilerplate-compose --verbose
+
+# Custom boilerplate CLI path
+./boilerplate-compose --boilerplate-path /usr/local/bin/boilerplate
+
 # Show version
 ./boilerplate-compose --version
 
 # Show help
 ./boilerplate-compose --help
 ```
+
+### Command Line Options
+
+- `-f, --file`: Path to compose configuration file
+- `--dry-run`: Show what commands would be executed without running them
+- `--verbose`: Show detailed output from boilerplate CLI commands
+- `--boilerplate-path`: Path to boilerplate CLI executable (defaults to PATH lookup)
+- `--version`: Show version information
+- `--help`: Show help message
 
 ### Configuration File
 
@@ -116,6 +142,78 @@ go test ./config -v
 │   ├── loader.go             # YAML parsing and validation
 │   ├── types_test.go         # Type tests
 │   └── loader_test.go        # Loader tests
+├── processor/
+│   ├── template.go           # Template processing logic
+│   ├── orchestrator.go       # Template orchestration
+│   ├── template_test.go      # Template tests
+│   └── orchestrator_test.go  # Orchestrator tests
+├── executor/
+│   ├── cli.go                # CLI execution with streaming
+│   ├── result.go             # Execution result tracking
+│   ├── cli_test.go           # CLI executor tests
+│   └── result_test.go        # Result tests
 ├── example-compose.yaml       # Example configuration
 └── boilerplate-compose.yaml  # Default config file
 ```
+
+### Execution Output
+
+When running templates, boilerplate-compose provides detailed execution reporting:
+
+```
+2025/08/11 16:55:46 Processing 3 templates
+2025/08/11 16:55:46 Processing template: frontend
+2025/08/11 16:55:46 Processing template: backend
+2025/08/11 16:55:46 Processing template: docs
+
+=== Execution Summary ===
+Total templates: 3
+Successful: 3
+Failed: 0
+Total duration: 47.75µs
+
+Template execution times:
+  ✓ frontend: 28.708µs
+  ✓ backend: 6.958µs
+  ✓ docs: 8.333µs
+
+All templates processed successfully.
+```
+
+### Dry Run Output
+
+Use `--dry-run` to preview what commands will be executed:
+
+```
+=== Template: frontend ===
+Command that would be executed:
+boilerplate --template-url https://github.com/example/react-template --output-folder ./frontend --var project_name=my-react-app --var author=john-doe --var version=1.0.0 --non-interactive --missing-key-action zero
+
+Template details:
+  URL: https://github.com/example/react-template
+  Output: ./frontend
+  Variables:
+    project_name = my-react-app
+    author = john-doe
+    version = 1.0.0
+
+=== Execution Summary ===
+Total templates: 3
+Successful: 3
+Failed: 0
+Total duration: 47.75µs
+
+Template execution times:
+  ✓ frontend: 28.708µs
+  ✓ backend: 6.958µs
+  ✓ docs: 8.333µs
+
+Dry run completed. Use without --dry-run to execute.
+```
+
+### Error Handling
+
+- **CLI Validation**: Checks if boilerplate CLI is available before execution
+- **Stop on Failure**: Execution stops on first template failure (unless in dry-run mode)
+- **Clear Error Messages**: Detailed error reporting with template context
+- **Execution Summary**: Shows which templates succeeded or failed
