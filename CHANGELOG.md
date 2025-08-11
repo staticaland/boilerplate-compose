@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/staticaland/boilerplate-compose/compare/v1.1.0...v1.2.0) (2025-08-11)
+
+
+### Features
+
+* goreleaser stuff ([ab5e570](https://github.com/staticaland/boilerplate-compose/commit/ab5e570dd20f02d0d5ab3a42f67723a85d4306fc))
+
 ## [1.1.0](https://github.com/staticaland/boilerplate-compose/compare/v1.0.0...v1.1.0) (2025-08-11)
 
 
