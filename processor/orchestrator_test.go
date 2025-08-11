@@ -13,7 +13,7 @@ import (
 
 func TestNewOrchestrator(t *testing.T) {
 	cfg := &config.ComposeConfig{}
-	tp := NewTemplateProcessor(cfg)
+	tp := NewTemplateProcessor(cfg, "/test/config.yaml")
 	exec := executor.NewCliExecutor("", false)
 	orch := NewOrchestrator(tp, exec, true)
 
@@ -41,7 +41,7 @@ func TestOrchestrator_Process(t *testing.T) {
 		},
 	}
 
-	tp := NewTemplateProcessor(cfg)
+	tp := NewTemplateProcessor(cfg, "/test/config.yaml")
 	exec := executor.NewCliExecutor("", false)
 
 	t.Run("dry run mode", func(t *testing.T) {
@@ -91,7 +91,7 @@ func TestOrchestrator_Process(t *testing.T) {
 
 func TestOrchestrator_ProcessJob(t *testing.T) {
 	cfg := &config.ComposeConfig{}
-	tp := NewTemplateProcessor(cfg)
+	tp := NewTemplateProcessor(cfg, "/test/config.yaml")
 	exec := executor.NewCliExecutor("", false)
 
 	job := ProcessingJob{

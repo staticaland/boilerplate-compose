@@ -43,7 +43,7 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	templateProcessor := processor.NewTemplateProcessor(cfg)
+	templateProcessor := processor.NewTemplateProcessor(cfg, configPath)
 	cliExecutor := executor.NewCliExecutor(*boilerplatePath, *verbose)
 	orchestrator := processor.NewOrchestrator(templateProcessor, cliExecutor, *dryRun)
 

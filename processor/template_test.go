@@ -3,16 +3,21 @@ package processor
 import (
 	"reflect"
 	"testing"
+	"path/filepath"
 
 	"boilerplate-compose/config"
 )
 
 func TestNewTemplateProcessor(t *testing.T) {
 	cfg := &config.ComposeConfig{}
-	tp := NewTemplateProcessor(cfg)
+	configPath := "/path/to/config.yaml"
+	tp := NewTemplateProcessor(cfg, configPath)
 
 	if tp.config != cfg {
 		t.Error("Expected config to be set")
+	}
+	if tp.configPath != configPath {
+		t.Error("Expected configPath to be set")
 	}
 }
 
@@ -32,7 +37,7 @@ func TestBuildBoilerplateArgs(t *testing.T) {
 			},
 			expected: []string{
 				"--template-url", "https://github.com/example/template",
-				"--output-folder", "./output",
+				"--output-folder", "/test/output",
 				"--var", "key1=value1",
 				"--var", "key2=value2",
 				"--non-interactive",
@@ -47,7 +52,7 @@ func TestBuildBoilerplateArgs(t *testing.T) {
 			},
 			expected: []string{
 				"--template-url", "https://github.com/example/template",
-				"--output-folder", "./output",
+				"--output-folder", "/test/output",
 				"--var-file", "vars.yaml",
 			},
 		},
@@ -60,7 +65,7 @@ func TestBuildBoilerplateArgs(t *testing.T) {
 			},
 			expected: []string{
 				"--template-url", "https://github.com/example/template",
-				"--output-folder", "./output",
+				"--output-folder", "/test/output",
 				"--var-file", "vars1.yaml",
 				"--var-file", "vars2.yaml",
 			},
@@ -77,7 +82,7 @@ func TestBuildBoilerplateArgs(t *testing.T) {
 			},
 			expected: []string{
 				"--template-url", "https://github.com/example/template",
-				"--output-folder", "./output",
+				"--output-folder", "/test/output",
 				"--non-interactive",
 				"--no-hooks",
 				"--no-shell",
@@ -94,7 +99,7 @@ func TestBuildBoilerplateArgs(t *testing.T) {
 			},
 			expected: []string{
 				"--template-url", "https://github.com/example/template",
-				"--output-folder", "./output",
+				"--output-folder", "/test/output",
 				"--missing-key-action", "zero",
 				"--missing-config-action", "ignore",
 			},
@@ -103,7 +108,7 @@ func TestBuildBoilerplateArgs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tp := &TemplateProcessor{}
+			tp := &TemplateProcessor{configPath: "/test/config.yaml"}
 			args, err := tp.buildBoilerplateArgs(tt.template)
 			if err != nil {
 				t.Fatalf("buildBoilerplateArgs() error = %v", err)
@@ -134,7 +139,7 @@ func TestBuildProcessingJobs(t *testing.T) {
 		},
 	}
 
-	tp := NewTemplateProcessor(cfg)
+	tp := NewTemplateProcessor(cfg, "/test/config.yaml")
 	jobs, err := tp.BuildProcessingJobs()
 
 	if err != nil {
@@ -175,4 +180,53 @@ func containsAllArgs(args, expected []string) bool {
 	}
 
 	return reflect.DeepEqual(argMap, expectedMap)
+}
+
+func TestResolveOutputPath(t *testing.T) {
+	tests := []struct {
+		name         string
+		configPath   string
+		outputFolder string
+		expected     string
+	}{
+		{
+			name:         "relative path in same directory",
+			configPath:   "/home/user/project/config.yaml",
+			outputFolder: "./output",
+			expected:     "/home/user/project/output",
+		},
+		{
+			name:         "relative path in subdirectory",
+			configPath:   "/home/user/project/config.yaml", 
+			outputFolder: "./frontend/build",
+			expected:     "/home/user/project/frontend/build",
+		},
+		{
+			name:         "absolute path unchanged",
+			configPath:   "/home/user/project/config.yaml",
+			outputFolder: "/tmp/output",
+			expected:     "/tmp/output",
+		},
+		{
+			name:         "config in subdirectory with relative output",
+			configPath:   "/home/user/project/configs/app.yaml",
+			outputFolder: "../output", 
+			expected:     "/home/user/project/output",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tp := &TemplateProcessor{configPath: tt.configPath}
+			result := tp.resolveOutputPath(tt.outputFolder)
+			
+			// Clean paths to handle different OS path separators
+			result = filepath.Clean(result)
+			expected := filepath.Clean(tt.expected)
+			
+			if result != expected {
+				t.Errorf("resolveOutputPath() = %v, want %v", result, expected)
+			}
+		})
+	}
 }

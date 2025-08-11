@@ -2,16 +2,21 @@ package processor
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"boilerplate-compose/config"
 )
 
 type TemplateProcessor struct {
-	config *config.ComposeConfig
+	config     *config.ComposeConfig
+	configPath string
 }
 
-func NewTemplateProcessor(cfg *config.ComposeConfig) *TemplateProcessor {
-	return &TemplateProcessor{config: cfg}
+func NewTemplateProcessor(cfg *config.ComposeConfig, configPath string) *TemplateProcessor {
+	return &TemplateProcessor{
+		config:     cfg,
+		configPath: configPath,
+	}
 }
 
 type ProcessingJob struct {
@@ -45,8 +50,9 @@ func (tp *TemplateProcessor) buildBoilerplateArgs(template config.Template) ([]s
 	// Add template URL
 	args = append(args, "--template-url", template.TemplateURL)
 
-	// Add output folder
-	args = append(args, "--output-folder", template.OutputFolder)
+	// Add output folder (resolve relative to config file)
+	outputPath := tp.resolveOutputPath(template.OutputFolder)
+	args = append(args, "--output-folder", outputPath)
 
 	// Add variables
 	for key, value := range template.Vars {
@@ -94,4 +100,17 @@ func (tp *TemplateProcessor) buildBoilerplateArgs(template config.Template) ([]s
 	}
 
 	return args, nil
+}
+
+func (tp *TemplateProcessor) resolveOutputPath(outputFolder string) string {
+	// If path is already absolute, return as-is
+	if filepath.IsAbs(outputFolder) {
+		return outputFolder
+	}
+	
+	// Get directory containing the config file
+	configDir := filepath.Dir(tp.configPath)
+	
+	// Join config directory with relative output path
+	return filepath.Join(configDir, outputFolder)
 }
