@@ -8,15 +8,21 @@ import (
 	"testing"
 
 	"boilerplate-compose/config"
+	"boilerplate-compose/executor"
 )
 
 func TestNewOrchestrator(t *testing.T) {
 	cfg := &config.ComposeConfig{}
 	tp := NewTemplateProcessor(cfg)
-	orch := NewOrchestrator(tp, true)
+	exec := executor.NewCliExecutor("", false)
+	orch := NewOrchestrator(tp, exec, true)
 
 	if orch.processor != tp {
 		t.Error("Expected processor to be set")
+	}
+
+	if orch.executor != exec {
+		t.Error("Expected executor to be set")
 	}
 
 	if !orch.dryRun {
@@ -36,6 +42,7 @@ func TestOrchestrator_Process(t *testing.T) {
 	}
 
 	tp := NewTemplateProcessor(cfg)
+	exec := executor.NewCliExecutor("", false)
 
 	t.Run("dry run mode", func(t *testing.T) {
 		// Capture stdout to verify dry run output
@@ -44,7 +51,7 @@ func TestOrchestrator_Process(t *testing.T) {
 		r, w, _ := os.Pipe()
 		os.Stdout = w
 
-		orch := NewOrchestrator(tp, true)
+		orch := NewOrchestrator(tp, exec, true)
 		err := orch.Process()
 
 		w.Close()
@@ -62,25 +69,22 @@ func TestOrchestrator_Process(t *testing.T) {
 		}
 	})
 
-	t.Run("normal mode", func(t *testing.T) {
+	t.Run("normal mode with CLI not available", func(t *testing.T) {
 		// Capture log output
 		var logBuf bytes.Buffer
 		log.SetOutput(&logBuf)
 		defer log.SetOutput(os.Stderr)
 
-		orch := NewOrchestrator(tp, false)
+		orch := NewOrchestrator(tp, exec, false)
 		err := orch.Process()
 
-		if err != nil {
-			t.Fatalf("Process() error = %v", err)
+		// Expect this to fail since boilerplate CLI is not installed
+		if err == nil {
+			t.Fatal("Expected error when boilerplate CLI is not available")
 		}
 
-		logOutput := logBuf.String()
-		if !strings.Contains(logOutput, "Processing 1 templates") {
-			t.Error("Expected log message about processing templates")
-		}
-		if !strings.Contains(logOutput, "Processing template: test-template") {
-			t.Error("Expected log message about processing specific template")
+		if !strings.Contains(err.Error(), "boilerplate CLI check failed") {
+			t.Errorf("Expected CLI check failure, got: %v", err)
 		}
 	})
 }
@@ -88,6 +92,7 @@ func TestOrchestrator_Process(t *testing.T) {
 func TestOrchestrator_ProcessJob(t *testing.T) {
 	cfg := &config.ComposeConfig{}
 	tp := NewTemplateProcessor(cfg)
+	exec := executor.NewCliExecutor("", false)
 
 	job := ProcessingJob{
 		Name: "test-job",
@@ -105,8 +110,12 @@ func TestOrchestrator_ProcessJob(t *testing.T) {
 		r, w, _ := os.Pipe()
 		os.Stdout = w
 
-		orch := NewOrchestrator(tp, true)
-		err := orch.processJob(job)
+		orch := NewOrchestrator(tp, exec, true)
+		result := orch.processJob(job)
+		
+		if !result.Success {
+			t.Fatalf("processJob() result error = %v", result.Error)
+		}
 
 		w.Close()
 		os.Stdout = originalStdout
@@ -115,10 +124,6 @@ func TestOrchestrator_ProcessJob(t *testing.T) {
 		output := make([]byte, 1024)
 		n, _ := r.Read(output)
 		buf.Write(output[:n])
-
-		if err != nil {
-			t.Fatalf("processJob() error = %v", err)
-		}
 
 		outputStr := string(output[:n])
 		if !strings.Contains(outputStr, "=== Template: test-job ===") {
@@ -129,25 +134,26 @@ func TestOrchestrator_ProcessJob(t *testing.T) {
 		}
 	})
 
-	t.Run("normal mode job", func(t *testing.T) {
+	t.Run("normal mode job with CLI not available", func(t *testing.T) {
 		// Capture log output
 		var logBuf bytes.Buffer
 		log.SetOutput(&logBuf)
 		defer log.SetOutput(os.Stderr)
 
-		orch := NewOrchestrator(tp, false)
-		err := orch.processJob(job)
+		orch := NewOrchestrator(tp, exec, false)
+		result := orch.processJob(job)
 
-		if err != nil {
-			t.Fatalf("processJob() error = %v", err)
+		if result.Success {
+			t.Fatal("Expected job to fail when boilerplate CLI is not available")
+		}
+
+		if result.Error == nil {
+			t.Error("Expected error when boilerplate CLI is not available")
 		}
 
 		logOutput := logBuf.String()
 		if !strings.Contains(logOutput, "Processing template: test-job") {
 			t.Error("Expected log message about processing template")
-		}
-		if !strings.Contains(logOutput, "Would execute: boilerplate") {
-			t.Error("Expected log message about command execution")
 		}
 	})
 }

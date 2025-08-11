@@ -8,20 +8,23 @@ import (
 
 	"boilerplate-compose/config"
 	"boilerplate-compose/processor"
+	"boilerplate-compose/executor"
 )
 
 var (
-	configFile = flag.String("f", "", "Path to compose file")
-	version    = flag.Bool("version", false, "Show version")
-	help       = flag.Bool("help", false, "Show help")
-	dryRun     = flag.Bool("dry-run", false, "Show what would be executed without running")
+	configFile      = flag.String("f", "", "Path to compose file")
+	version         = flag.Bool("version", false, "Show version")
+	help            = flag.Bool("help", false, "Show help")
+	dryRun          = flag.Bool("dry-run", false, "Show what would be executed without running")
+	boilerplatePath = flag.String("boilerplate-path", "", "Path to boilerplate CLI (defaults to PATH lookup)")
+	verbose         = flag.Bool("verbose", false, "Show detailed output from boilerplate commands")
 )
 
 func main() {
 	flag.Parse()
 
 	if *help {
-		flag.Usage()
+		printUsage()
 		return
 	}
 
@@ -41,7 +44,8 @@ func main() {
 	}
 
 	templateProcessor := processor.NewTemplateProcessor(cfg)
-	orchestrator := processor.NewOrchestrator(templateProcessor, *dryRun)
+	cliExecutor := executor.NewCliExecutor(*boilerplatePath, *verbose)
+	orchestrator := processor.NewOrchestrator(templateProcessor, cliExecutor, *dryRun)
 
 	if err := orchestrator.Process(); err != nil {
 		log.Fatalf("Processing failed: %v", err)
@@ -50,7 +54,7 @@ func main() {
 	if *dryRun {
 		fmt.Println("\nDry run completed. Use without --dry-run to execute.")
 	} else {
-		fmt.Println("All templates processed successfully.")
+		fmt.Println("\nAll templates processed successfully.")
 	}
 }
 
@@ -67,4 +71,15 @@ func findConfigFile(specified string) string {
 	}
 
 	return ""
+}
+
+func printUsage() {
+	fmt.Println("boilerplate-compose - Orchestrate template rendering using boilerplate CLI")
+	fmt.Println("\nUsage:")
+	fmt.Println("  boilerplate-compose [options]")
+	fmt.Println("\nOptions:")
+	flag.PrintDefaults()
+	fmt.Println("\nExample:")
+	fmt.Println("  boilerplate-compose -f my-compose.yaml --verbose")
+	fmt.Println("  boilerplate-compose --dry-run")
 }
