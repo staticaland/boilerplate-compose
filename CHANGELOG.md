@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/staticaland/boilerplate-compose/compare/v1.0.0...v1.1.0) (2025-08-11)
+
+
+### Features
+
+* add more tests and stuff ([df33ee1](https://github.com/staticaland/boilerplate-compose/commit/df33ee19f8e2612953c23c39640549356c584adf))
+* make output dir relative to compose file ([03eec85](https://github.com/staticaland/boilerplate-compose/commit/03eec85e26ae4b108f85c4d75bc6cb80ddcd0f31))
+
 ## 1.0.0 (2025-08-11)
 
 
