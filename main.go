@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
+
+	"boilerplate-compose/config"
 )
 
 var (
@@ -25,18 +28,34 @@ func main() {
 		return
 	}
 
-	configPath := *configFile
+	configPath := findConfigFile(*configFile)
 	if configPath == "" {
-		// Look for default files
-		if _, err := os.Stat("boilerplate-compose.yaml"); err == nil {
-			configPath = "boilerplate-compose.yaml"
-		} else if _, err := os.Stat("boilerplate-compose.yml"); err == nil {
-			configPath = "boilerplate-compose.yml"
-		} else {
-			fmt.Println("No compose file found. Use -f to specify a file.")
-			os.Exit(1)
+		log.Fatal("No compose file found. Use -f to specify a file.")
+	}
+
+	cfg, err := config.LoadConfig(configPath)
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	fmt.Printf("Loaded config from: %s\n", configPath)
+	fmt.Printf("Found %d templates:\n", len(cfg.Templates))
+	for name, template := range cfg.Templates {
+		fmt.Printf("  - %s: %s -> %s\n", name, template.TemplateURL, template.OutputFolder)
+	}
+}
+
+func findConfigFile(specified string) string {
+	if specified != "" {
+		return specified
+	}
+
+	candidates := []string{"boilerplate-compose.yaml", "boilerplate-compose.yml"}
+	for _, candidate := range candidates {
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
 		}
 	}
 
-	fmt.Printf("Hello World! Using config file: %s\n", configPath)
+	return ""
 }
