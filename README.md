@@ -36,29 +36,29 @@ go build -o boilerplate-compose
 ./boilerplate-compose -f my-compose.yaml
 
 # Dry run - preview commands without executing
-./boilerplate-compose --dry-run
+./boilerplate-compose -dry-run
 
 # Verbose output - show detailed boilerplate CLI output
-./boilerplate-compose --verbose
+./boilerplate-compose -verbose
 
 # Custom boilerplate CLI path
-./boilerplate-compose --boilerplate-path /usr/local/bin/boilerplate
+./boilerplate-compose -boilerplate-path /usr/local/bin/boilerplate
 
 # Show version
-./boilerplate-compose --version
+./boilerplate-compose -version
 
 # Show help
-./boilerplate-compose --help
+./boilerplate-compose -help
 ```
 
 ### Command Line Options
 
-- `-f, --file`: Path to compose configuration file
-- `--dry-run`: Show what commands would be executed without running them
-- `--verbose`: Show detailed output from boilerplate CLI commands
-- `--boilerplate-path`: Path to boilerplate CLI executable (defaults to PATH lookup)
-- `--version`: Show version information
-- `--help`: Show help message
+- `-f`: Path to compose configuration file
+- `-dry-run`: Show what commands would be executed without running them
+- `-verbose`: Show detailed output from boilerplate CLI commands
+- `-boilerplate-path`: Path to boilerplate CLI executable (defaults to PATH lookup)
+- `-version`: Show version information
+- `-help`: Show help message
 
 ### Configuration File
 
@@ -182,7 +182,7 @@ All templates processed successfully.
 
 ### Dry Run Output
 
-Use `--dry-run` to preview what commands will be executed:
+Use `-dry-run` to preview what commands will be executed:
 
 ```
 === Template: frontend ===
@@ -208,7 +208,7 @@ Template execution times:
   ✓ backend: 6.958µs
   ✓ docs: 8.333µs
 
-Dry run completed. Use without --dry-run to execute.
+Dry run completed. Use without -dry-run to execute.
 ```
 
 ### Error Handling
