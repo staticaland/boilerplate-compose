@@ -15,8 +15,13 @@ A CLI tool for composing multiple boilerplate templates into a single project se
 
 ## Prerequisites
 
-- Go 1.19 or later
-- [Boilerplate CLI](https://github.com/gruntwork-io/boilerplate) installed and available in PATH
+Go 1.19 or later.
+
+[Boilerplate CLI](https://github.com/gruntwork-io/boilerplate) installed and available in PATH. With [Mise](https://mise.jdx.dev/dev-tools/backends/aqua.html):
+
+```
+mise use -g aqua:gruntwork-io/boilerplate
+```
 
 ## Installation
 
