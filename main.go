@@ -12,8 +12,12 @@ import (
 )
 
 var (
+	// Build-time variables set by goreleaser
+	version = "dev"
+	
+	// CLI flags
 	configFile      = flag.String("f", "", "Path to compose file")
-	version         = flag.Bool("version", false, "Show version")
+	showVersion     = flag.Bool("version", false, "Show version")
 	help            = flag.Bool("help", false, "Show help")
 	dryRun          = flag.Bool("dry-run", false, "Show what would be executed without running")
 	boilerplatePath = flag.String("boilerplate-path", "", "Path to boilerplate CLI (defaults to PATH lookup)")
@@ -28,8 +32,8 @@ func main() {
 		return
 	}
 
-	if *version {
-		fmt.Println("boilerplate-compose version 0.1.0")
+	if *showVersion {
+		fmt.Printf("boilerplate-compose version %s\n", version)
 		return
 	}
 
