@@ -2,7 +2,7 @@
 cask "boilerplate-compose" do
   desc ""
   homepage ""
-  version "1.2.0"
+  version "1.3.0"
 
   livecheck do
     skip "Auto-generated on release."
@@ -12,23 +12,23 @@ cask "boilerplate-compose" do
 
   on_macos do
     on_intel do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.2.0/boilerplate-compose_1.2.0_darwin_amd64.tar.gz"
-      sha256 "7c278b12afe90252f20e843f99c22045529d522144205fd2bff9c6e56df17a5d"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.3.0/boilerplate-compose_1.3.0_darwin_amd64.tar.gz"
+      sha256 "9f90a6597e179f1a465cc7f1246e09a4873978ff74815c875f60faef3dc226d5"
     end
     on_arm do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.2.0/boilerplate-compose_1.2.0_darwin_arm64.tar.gz"
-      sha256 "6221603a30f7d5998feb5eb77bc1ac1848bf99aa2bb76aee80727c9d710c7dd5"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.3.0/boilerplate-compose_1.3.0_darwin_arm64.tar.gz"
+      sha256 "536116dfefe9c1074543a2240fba76646b71c9aa24b82dc0b3d4dd4ca05e3a74"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.2.0/boilerplate-compose_1.2.0_linux_amd64.tar.gz"
-      sha256 "20a4544640d9ad85ffda13a8dfdcca23a59b8733a61eccb0260efc9adaf63348"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.3.0/boilerplate-compose_1.3.0_linux_amd64.tar.gz"
+      sha256 "28f64e804b4c68e74444dd0edd813bb87722fec837ff0eb56b0262db02b3b6d0"
     end
     on_arm do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.2.0/boilerplate-compose_1.2.0_linux_arm64.tar.gz"
-      sha256 "4317712ff2a20b2d3e68a8dd6a1ab7bc9bb4168d7585b26cd614e2b2bb3d540e"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.3.0/boilerplate-compose_1.3.0_linux_arm64.tar.gz"
+      sha256 "cbd7aa25da7d0828237a94fa6bfefa81bbaa1c337ea174fd3df04fe63e461fcb"
     end
   end
 
