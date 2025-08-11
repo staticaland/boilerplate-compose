@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/staticaland/boilerplate-compose/compare/v1.2.0...v1.3.0) (2025-08-11)
+
+
+### Features
+
+* fix some wrong flags ([d5a18fb](https://github.com/staticaland/boilerplate-compose/commit/d5a18fb878411449a322e6098bd1caa8421414c7))
+
 ## [1.2.0](https://github.com/staticaland/boilerplate-compose/compare/v1.1.0...v1.2.0) (2025-08-11)
 
 
