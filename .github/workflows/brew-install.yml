@@ -27,18 +27,13 @@ jobs:
         run: brew --version
 
       - name: Tap repository
-        run: brew tap staticaland/pin-github-actions https://github.com/staticaland/pin-github-actions
+        run: brew tap staticaland/boilerplate-compose https://github.com/staticaland/boilerplate-compose
 
       - name: Install cask
-        run: brew install --cask pin-github-actions
+        run: brew install --cask boilerplate-compose
 
       - name: Verify binary is available
         run: |
-          which pin-github-actions
-          pin-github-actions -h || true
+          which boilerplate-compose
+          boilerplate-compose -h || true
 
-      - name: Run CLI non-interactively against release workflow
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          printf "n\n" | pin-github-actions .github/workflows/release.yml
