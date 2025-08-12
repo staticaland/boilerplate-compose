@@ -5,6 +5,7 @@ A CLI tool for composing multiple boilerplate templates into a single project se
 ## Features
 
 - **YAML Configuration**: Define multiple templates in a single configuration file
+- **Environment Variables**: Support for variable interpolation using `${VAR}` syntax with .env files
 - **Template Variables**: Support for template variables and variable files
 - **Real Execution**: Execute boilerplate CLI with streaming output and error handling
 - **Dry Run Mode**: Preview commands without executing them
@@ -52,6 +53,9 @@ go build -o boilerplate-compose
 
 # Show help
 ./boilerplate-compose -help
+
+# Use custom environment file
+./boilerplate-compose --env-file production.env
 ```
 
 ### Command Line Options
@@ -60,6 +64,7 @@ go build -o boilerplate-compose
 - `-dry-run`: Show what commands would be executed without running them
 - `-verbose`: Show detailed output from boilerplate CLI commands
 - `-boilerplate-path`: Path to boilerplate CLI executable (defaults to PATH lookup)
+- `--env-file`: Path to .env file (defaults to .env in current directory)
 - `-version`: Show version information
 - `-help`: Show help message
 
@@ -118,6 +123,104 @@ include:
 extends:
   file: "base-compose.yaml"
   template: "base-template"
+```
+
+## Environment Variables
+
+`boilerplate-compose` supports environment variable interpolation using Docker Compose-style `${VAR}` syntax, similar to [Docker Compose variable interpolation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/).
+
+### .env File Support
+
+Create a `.env` file in your project root:
+
+```bash
+# .env
+TAG=v1.5
+PROJECT_NAME=my-awesome-project
+AUTHOR=john-doe
+BACKEND_VERSION=2.0.0
+TEMPLATE_REPO=https://github.com/example
+```
+
+### Variable Interpolation in Compose Files
+
+Use `${VAR}` syntax in your compose file:
+
+```yaml
+# boilerplate-compose.yaml
+templates:
+  frontend:
+    template-url: "${TEMPLATE_REPO}/react-template"
+    output-folder: "./frontend"
+    vars:
+      project_name: "${PROJECT_NAME}"
+      author: "${AUTHOR}"
+      version: "${TAG}"
+    non-interactive: true
+
+  backend:
+    template-url: "${TEMPLATE_REPO}/go-api-template"
+    output-folder: "./backend"
+    vars:
+      project_name: "${PROJECT_NAME}"
+      author: "${AUTHOR}"
+      version: "${BACKEND_VERSION}"
+    no-hooks: true
+```
+
+### Environment File Options
+
+```bash
+# Use default .env file (if it exists)
+./boilerplate-compose
+
+# Specify custom environment file
+./boilerplate-compose --env-file production.env
+
+# Multiple environment files (system env + file)
+# System environment variables are loaded first,
+# then .env file variables override them
+export PROJECT_NAME=override-name
+./boilerplate-compose --env-file production.env
+```
+
+### Variable Resolution Order
+
+1. **System environment variables** are loaded first
+2. **Environment file variables** (`.env` or `--env-file`) override system variables
+3. **Missing variables** remain as `${VAR}` in the output (no error)
+
+### Examples
+
+**Example 1: Development vs Production**
+
+```bash
+# Development (.env)
+TAG=dev
+TEMPLATE_REPO=https://github.com/dev-templates
+
+# Production (production.env)
+TAG=v2.0
+TEMPLATE_REPO=https://github.com/prod-templates
+
+# Use development environment
+./boilerplate-compose
+
+# Use production environment
+./boilerplate-compose --env-file production.env
+```
+
+**Example 2: Complex Variable Usage**
+
+```yaml
+templates:
+  web:
+    template-url: "${TEMPLATE_REPO}/webapp-template"
+    output-folder: "./apps/${PROJECT_NAME}"
+    vars:
+      app_name: "${PROJECT_NAME}-web"
+      version: "${TAG}"
+      db_host: "${DB_HOST:-localhost}"  # Note: default values not supported yet
 ```
 
 ## Development

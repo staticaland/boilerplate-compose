@@ -184,3 +184,99 @@ func createTempConfigFile(t *testing.T, content string) string {
 	
 	return tempFile
 }
+
+func TestLoadConfigWithEnvironment(t *testing.T) {
+	t.Run("with environment variables", func(t *testing.T) {
+		configContent := `
+templates:
+  frontend:
+    template-url: "${TEMPLATE_REPO}/react-template"
+    output-folder: "./frontend"
+    vars:
+      project_name: "${PROJECT_NAME}"
+      version: "${TAG}"
+  backend:
+    template-url: "${TEMPLATE_REPO}/go-api-template"
+    output-folder: "./backend"
+    vars:
+      project_name: "${PROJECT_NAME}"
+      version: "${BACKEND_VERSION}"
+`
+		tempFile := createTempConfigFile(t, configContent)
+		defer os.Remove(tempFile)
+
+		// Create environment manager with test variables
+		envManager := NewEnvironmentManager()
+		envManager.SetVariable("TEMPLATE_REPO", "https://github.com/test")
+		envManager.SetVariable("PROJECT_NAME", "test-project")
+		envManager.SetVariable("TAG", "v1.0")
+		envManager.SetVariable("BACKEND_VERSION", "v2.0")
+
+		config, err := LoadConfigWithEnvironment(tempFile, envManager)
+		if err != nil {
+			t.Fatalf("Expected no error, got: %v", err)
+		}
+
+		// Verify interpolation worked
+		frontend := config.Templates["frontend"]
+		if frontend.TemplateURL != "https://github.com/test/react-template" {
+			t.Errorf("Expected template URL 'https://github.com/test/react-template', got '%s'", frontend.TemplateURL)
+		}
+		if frontend.Vars["project_name"] != "test-project" {
+			t.Errorf("Expected project_name 'test-project', got '%s'", frontend.Vars["project_name"])
+		}
+		if frontend.Vars["version"] != "v1.0" {
+			t.Errorf("Expected version 'v1.0', got '%s'", frontend.Vars["version"])
+		}
+
+		backend := config.Templates["backend"]
+		if backend.Vars["version"] != "v2.0" {
+			t.Errorf("Expected backend version 'v2.0', got '%s'", backend.Vars["version"])
+		}
+	})
+
+	t.Run("with missing environment variables", func(t *testing.T) {
+		configContent := `
+templates:
+  frontend:
+    template-url: "${MISSING_VAR}/react-template"
+    output-folder: "./frontend"
+`
+		tempFile := createTempConfigFile(t, configContent)
+		defer os.Remove(tempFile)
+
+		envManager := NewEnvironmentManager()
+		config, err := LoadConfigWithEnvironment(tempFile, envManager)
+		if err != nil {
+			t.Fatalf("Expected no error, got: %v", err)
+		}
+
+		// Missing variables should remain as-is
+		frontend := config.Templates["frontend"]
+		if frontend.TemplateURL != "${MISSING_VAR}/react-template" {
+			t.Errorf("Expected template URL '${MISSING_VAR}/react-template', got '%s'", frontend.TemplateURL)
+		}
+	})
+
+	t.Run("without environment manager", func(t *testing.T) {
+		configContent := `
+templates:
+  frontend:
+    template-url: "${VAR}/react-template"
+    output-folder: "./frontend"
+`
+		tempFile := createTempConfigFile(t, configContent)
+		defer os.Remove(tempFile)
+
+		config, err := LoadConfigWithEnvironment(tempFile, nil)
+		if err != nil {
+			t.Fatalf("Expected no error, got: %v", err)
+		}
+
+		// No interpolation should happen
+		frontend := config.Templates["frontend"]
+		if frontend.TemplateURL != "${VAR}/react-template" {
+			t.Errorf("Expected template URL '${VAR}/react-template', got '%s'", frontend.TemplateURL)
+		}
+	})
+}
