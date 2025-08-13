@@ -1,0 +1,20 @@
+version: "1.0"
+
+templates:
+  website-ssh:
+    template-url: "git@github.com:gruntwork-io/boilerplate.git//examples/for-learning-and-testing/website?ref=v0.8.1"
+    output-folder: "./output/website-ssh-v081"
+    non-interactive: true
+    vars:
+      Title: "Website SSH v0.8.1"
+      WelcomeText: "Testing v0.8.1 via SSH"
+      ShowLogo: "true"
+
+  website-https:
+    template-url: "https://github.com/gruntwork-io/boilerplate.git//examples/for-learning-and-testing/website?ref=v0.8.1"
+    output-folder: "./output/website-https-v081"
+    non-interactive: true
+    vars:
+      Title: "Website HTTPS v0.8.1"
+      WelcomeText: "Testing v0.8.1 via HTTPS"
+      ShowLogo: "false"
