@@ -15,9 +15,13 @@ test-compose:
 test-complex:
     go run . -f tests/complex-test.yaml
 
+# Test variable interpolation using .env file in tests directory
+test-env:
+    go run . -f tests/interpolation-test.yaml -env-file tests/.env -dry-run
+
 # Clean output directory
 clean:
     rm -rf tests/output/*
 
 # Run all tests and clean up
-test-all: test-basic test-compose test-complex clean
+test-all: test-basic test-compose test-complex test-env clean

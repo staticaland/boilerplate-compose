@@ -1,0 +1,11 @@
+version: "1.0"
+
+templates:
+  env-website:
+    template-url: "${TEMPLATE_URL}"
+    output-folder: "./output/${OUTPUT_SUBDIR}"
+    non-interactive: true
+    vars:
+      Title: "${TITLE}"
+      WelcomeText: "${WELCOME}"
+      ShowLogo: "${SHOW_LOGO}"
