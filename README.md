@@ -55,7 +55,7 @@ go build -o boilerplate-compose
 ./boilerplate-compose -help
 
 # Use custom environment file
-./boilerplate-compose --env-file production.env
+./boilerplate-compose -env-file production.env
 ```
 
 ### Command Line Options
@@ -64,7 +64,7 @@ go build -o boilerplate-compose
 - `-dry-run`: Show what commands would be executed without running them
 - `-verbose`: Show detailed output from boilerplate CLI commands
 - `-boilerplate-path`: Path to boilerplate CLI executable (defaults to PATH lookup)
-- `--env-file`: Path to .env file (defaults to .env in current directory)
+- `-env-file`: Path to .env file (defaults to .env in current directory)
 - `-version`: Show version information
 - `-help`: Show help message
 
@@ -175,19 +175,19 @@ templates:
 ./boilerplate-compose
 
 # Specify custom environment file
-./boilerplate-compose --env-file production.env
+./boilerplate-compose -env-file production.env
 
 # Multiple environment files (system env + file)
 # System environment variables are loaded first,
 # then .env file variables override them
 export PROJECT_NAME=override-name
-./boilerplate-compose --env-file production.env
+./boilerplate-compose -env-file production.env
 ```
 
 ### Variable Resolution Order
 
 1. **System environment variables** are loaded first
-2. **Environment file variables** (`.env` or `--env-file`) override system variables
+2. **Environment file variables** (`.env` or `-env-file`) override system variables
 3. **Missing variables** remain as `${VAR}` in the output (no error)
 
 ### Examples
@@ -207,7 +207,7 @@ TEMPLATE_REPO=https://github.com/prod-templates
 ./boilerplate-compose
 
 # Use production environment
-./boilerplate-compose --env-file production.env
+./boilerplate-compose -env-file production.env
 ```
 
 **Example 2: Complex Variable Usage**

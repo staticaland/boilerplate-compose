@@ -114,5 +114,5 @@ func printUsage() {
 	fmt.Println("\nExample:")
 	fmt.Println("  boilerplate-compose -f my-compose.yaml -verbose")
 	fmt.Println("  boilerplate-compose -dry-run")
-	fmt.Println("  boilerplate-compose --env-file production.env")
+	fmt.Println("  boilerplate-compose -env-file production.env")
 }
