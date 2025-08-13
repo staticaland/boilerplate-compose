@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/staticaland/boilerplate-compose/compare/v1.3.0...v1.4.0) (2025-08-13)
+
+
+### Features
+
+* Add support for Docker Compose-style variable interpolation ([960a9f7](https://github.com/staticaland/boilerplate-compose/commit/960a9f7c5fc6d8d3dbea919d6ee9d17eee7a210b))
+
 ## [1.3.0](https://github.com/staticaland/boilerplate-compose/compare/v1.2.0...v1.3.0) (2025-08-11)
 
 
