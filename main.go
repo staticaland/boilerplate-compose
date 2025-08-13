@@ -22,6 +22,7 @@ var (
 	dryRun          = flag.Bool("dry-run", false, "Show what would be executed without running")
 	boilerplatePath = flag.String("boilerplate-path", "", "Path to boilerplate CLI (defaults to PATH lookup)")
 	verbose         = flag.Bool("verbose", false, "Show detailed output from boilerplate commands")
+	envFile         = flag.String("env-file", "", "Path to .env file (defaults to .env in current directory)")
 )
 
 func main() {
@@ -42,7 +43,21 @@ func main() {
 		log.Fatal("No compose file found. Use -f to specify a file.")
 	}
 
-	cfg, err := config.LoadConfig(configPath)
+	// Set up environment manager
+	envManager := config.NewEnvironmentManager()
+	
+	// Load system environment first
+	envManager.LoadSystemEnvironment()
+	
+	// Load from .env file if specified or if default .env exists
+	envFilePath := findEnvFile(*envFile)
+	if envFilePath != "" {
+		if err := envManager.LoadEnvironmentFromFile(envFilePath); err != nil {
+			log.Fatalf("Failed to load environment file: %v", err)
+		}
+	}
+
+	cfg, err := config.LoadConfigWithEnvironment(configPath, envManager)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
@@ -77,6 +92,19 @@ func findConfigFile(specified string) string {
 	return ""
 }
 
+func findEnvFile(specified string) string {
+	if specified != "" {
+		return specified
+	}
+
+	// Check for default .env file
+	if _, err := os.Stat(".env"); err == nil {
+		return ".env"
+	}
+
+	return ""
+}
+
 func printUsage() {
 	fmt.Println("boilerplate-compose - Orchestrate template rendering using boilerplate CLI")
 	fmt.Println("\nUsage:")
@@ -86,4 +114,5 @@ func printUsage() {
 	fmt.Println("\nExample:")
 	fmt.Println("  boilerplate-compose -f my-compose.yaml -verbose")
 	fmt.Println("  boilerplate-compose -dry-run")
+	fmt.Println("  boilerplate-compose -env-file production.env")
 }
