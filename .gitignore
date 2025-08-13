@@ -36,3 +36,5 @@ boilerplate-compose
 # Test output directory
 tests/output/
 output
+
+!tests/.env
