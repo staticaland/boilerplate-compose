@@ -4,9 +4,10 @@
   "customManagers": [
     {
       "customType": "jsonata",
-      "fileMatch": ["^tests/.*\\.ya?ml$"],
-      "fileFormat": "yaml",
-      "jsonata": "$each(templates, function($tpl, $tplName) { $url := $tpl.\"template-url\"; $isGh := $url and $contains($url, \"github.com\") and $contains($url, \"ref=\"); $repoPart := $isGh ? ($contains($url, \"github.com:\") ? $split($url, \"github.com:\")[1] : $split($url, \"github.com/\")[1]) : null; $repo := $repoPart ? $split($repoPart, \".git\")[0] : null; $ref := $isGh ? $split($split($url, \"ref=\")[1], \"&\")[0] : null; $refSegment := $isGh ? (\"ref=\" & $ref) : null; $isGh and $repo and $ref ? { \"depName\": $repo, \"currentValue\": $ref, \"replaceString\": $refSegment, \"templateName\": $tplName, \"depType\": \"template-\" & $tplName } : null })",
+      "managerFilePatterns": ["^tests/.*\\.ya?ml$"],
+      "matchStrings": [
+        "$each(templates, function($tpl, $tplName) { $url := $tpl.\"template-url\"; $hasRef := $url and $contains($url, \"ref=\"); $hasGithub := $url and $contains($url, \"github.com\"); $hasRef and $hasGithub ? { \"depName\": \"gruntwork-io/boilerplate\", \"currentValue\": $split($split($url, \"ref=\")[1], \"&\")[0], \"replaceString\": \"ref=\" & $split($split($url, \"ref=\")[1], \"&\")[0], \"templateName\": $tplName, \"depType\": \"template-\" & $tplName } : null })"
+      ],
       "datasourceTemplate": "github-tags",
       "autoReplaceStringTemplate": "ref={{newValue}}"
     }
