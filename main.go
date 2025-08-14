@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"boilerplate-compose/config"
@@ -26,21 +25,28 @@ var (
 )
 
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	flag.Parse()
 
 	if *help {
 		printUsage()
-		return
+		return nil
 	}
 
 	if *showVersion {
 		fmt.Printf("boilerplate-compose version %s\n", version)
-		return
+		return nil
 	}
 
 	configPath := findConfigFile(*configFile)
 	if configPath == "" {
-		log.Fatal("No compose file found. Use -f to specify a file.")
+		return fmt.Errorf("no compose file found. Use -f to specify a file")
 	}
 
 	// Set up environment manager
@@ -53,13 +59,13 @@ func main() {
 	envFilePath := findEnvFile(*envFile)
 	if envFilePath != "" {
 		if err := envManager.LoadEnvironmentFromFile(envFilePath); err != nil {
-			log.Fatalf("Failed to load environment file: %v", err)
+			return fmt.Errorf("failed to load environment file: %w", err)
 		}
 	}
 
 	cfg, err := config.LoadConfigWithEnvironment(configPath, envManager)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		return fmt.Errorf("failed to load config: %w", err)
 	}
 
 	templateProcessor := processor.NewTemplateProcessor(cfg, configPath)
@@ -67,7 +73,7 @@ func main() {
 	orchestrator := processor.NewOrchestrator(templateProcessor, cliExecutor, *dryRun)
 
 	if err := orchestrator.Process(); err != nil {
-		log.Fatalf("Processing failed: %v", err)
+		return fmt.Errorf("processing failed: %w", err)
 	}
 
 	if *dryRun {
@@ -75,6 +81,8 @@ func main() {
 	} else {
 		fmt.Println("\nAll templates processed successfully.")
 	}
+	
+	return nil
 }
 
 func findConfigFile(specified string) string {
