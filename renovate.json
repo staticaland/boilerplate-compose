@@ -6,7 +6,7 @@
       "customType": "jsonata",
       "managerFilePatterns": ["^tests/.*\\.ya?ml$"],
       "matchStrings": [
-        "$each(templates, function($tpl, $tplName) { $url := $tpl.\"template-url\"; $hasRef := $url and $contains($url, \"ref=\"); $hasGithub := $url and $contains($url, \"github.com\"); $hasRef and $hasGithub ? { \"depName\": \"gruntwork-io/boilerplate\", \"currentValue\": $split($split($url, \"ref=\")[1], \"&\")[0], \"replaceString\": \"ref=\" & $split($split($url, \"ref=\")[1], \"&\")[0], \"templateName\": $tplName, \"depType\": \"template-\" & $tplName } : null })"
+        "$each(templates, function($tpl, $tplName) { $contains($tpl.\"template-url\", \"ref=\") and $contains($tpl.\"template-url\", \"github.com\") ? { \"depName\": \"gruntwork-io/boilerplate\", \"currentValue\": $split($split($tpl.\"template-url\", \"ref=\")[1], \"&\")[0], \"replaceString\": \"ref=\" & $split($split($tpl.\"template-url\", \"ref=\")[1], \"&\")[0], \"templateName\": $tplName, \"depType\": \"template-\" & $tplName } : null })"
       ],
       "datasourceTemplate": "github-tags",
       "autoReplaceStringTemplate": "ref={{newValue}}"
