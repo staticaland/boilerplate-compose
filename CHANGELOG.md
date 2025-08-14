@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/staticaland/boilerplate-compose/compare/v1.4.0...v1.5.0) (2025-08-14)
+
+
+### Features
+
+* returns ([ecd0a3b](https://github.com/staticaland/boilerplate-compose/commit/ecd0a3ba699ef06bc1ffa81823f3672f0d5f49e9))
+* use godotenv ([d9d65d5](https://github.com/staticaland/boilerplate-compose/commit/d9d65d5bda68b8b4e55ef2d9863be0820d97bbaf))
+
 ## [1.4.0](https://github.com/staticaland/boilerplate-compose/compare/v1.3.0...v1.4.0) (2025-08-13)
 
 
