@@ -7,7 +7,7 @@
       "fileFormat": "yaml",
       "managerFilePatterns": ["^tests/.*\\.ya?ml$"],
       "matchStrings": [
-        "$each(templates, function($tpl, $tplName) { $tpl.\"template-url\" and $contains($tpl.\"template-url\", \"ref=\") ? { \"depName\": \"gruntwork-io/boilerplate\", \"currentValue\": $split($split($tpl.\"template-url\", \"ref=\")[1], \"&\")[0], \"datasource\": \"github-tags\" } : null })"
+        "templates.{\"depName\": \"gruntwork-io/boilerplate\", \"currentValue\": $match($$.\"template-url\", /ref=v([0-9.]+)/).groups[0], \"datasource\": \"github-tags\"}"
       ],
       "datasourceTemplate": "github-tags",
       "autoReplaceStringTemplate": "ref={{newValue}}"
