@@ -111,49 +111,6 @@ func TestLoadSystemEnvironment(t *testing.T) {
 	}
 }
 
-func TestParseEnvLine(t *testing.T) {
-	em := NewEnvironmentManager()
-
-	tests := []struct {
-		line        string
-		expectError bool
-		key         string
-		value       string
-	}{
-		{"KEY=value", false, "KEY", "value"},
-		{"KEY=", false, "KEY", ""},
-		{"KEY=value with spaces", false, "KEY", "value with spaces"},
-		{"KEY=\"quoted value\"", false, "KEY", "quoted value"},
-		{"KEY='single quoted'", false, "KEY", "single quoted"},
-		{"  KEY  =  value  ", false, "KEY", "value"},
-		{"=value", true, "", ""},
-		{"KEY", true, "", ""},
-		{"", true, "", ""},
-	}
-
-	for i, test := range tests {
-		err := em.parseEnvLine(test.line, i+1)
-		if test.expectError {
-			if err == nil {
-				t.Errorf("Line %d: expected error for %q", i+1, test.line)
-			}
-			continue
-		}
-		if err != nil {
-			t.Errorf("Line %d: unexpected error for %q: %v", i+1, test.line, err)
-			continue
-		}
-
-		value, exists := em.GetVariable(test.key)
-		if !exists {
-			t.Errorf("Line %d: variable %s not found after parsing %q", i+1, test.key, test.line)
-			continue
-		}
-		if value != test.value {
-			t.Errorf("Line %d: variable %s: expected %q, got %q", i+1, test.key, test.value, value)
-		}
-	}
-}
 
 func TestInterpolateString(t *testing.T) {
 	em := NewEnvironmentManager()

@@ -1,12 +1,12 @@
 package config
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 // EnvironmentManager handles environment variables and .env file parsing
@@ -27,43 +27,13 @@ func (em *EnvironmentManager) LoadEnvironmentFromFile(envFilePath string) error 
 		return nil
 	}
 
-	if !filepath.IsAbs(envFilePath) {
-		wd, err := os.Getwd()
-		if err != nil {
-			return fmt.Errorf("failed to get working directory: %w", err)
-		}
-		envFilePath = filepath.Join(wd, envFilePath)
-	}
-
-	if _, err := os.Stat(envFilePath); os.IsNotExist(err) {
-		return fmt.Errorf("env file not found: %s", envFilePath)
-	}
-
-	file, err := os.Open(envFilePath)
+	fileEnv, err := godotenv.Read(envFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to open env file: %w", err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	lineNum := 0
-	for scanner.Scan() {
-		lineNum++
-		line := strings.TrimSpace(scanner.Text())
-		
-		// Skip empty lines and comments
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-
-		// Parse KEY=VALUE format
-		if err := em.parseEnvLine(line, lineNum); err != nil {
-			return fmt.Errorf("error parsing line %d in %s: %w", lineNum, envFilePath, err)
-		}
+		return fmt.Errorf("failed to load env file %s: %w", envFilePath, err)
 	}
 
-	if err := scanner.Err(); err != nil {
-		return fmt.Errorf("error reading env file: %w", err)
+	for key, value := range fileEnv {
+		em.envVars[key] = value
 	}
 
 	return nil
@@ -79,33 +49,6 @@ func (em *EnvironmentManager) LoadSystemEnvironment() {
 	}
 }
 
-// parseEnvLine parses a single line from the .env file
-func (em *EnvironmentManager) parseEnvLine(line string, lineNum int) error {
-	// Basic KEY=VALUE parsing
-	parts := strings.SplitN(line, "=", 2)
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid format, expected KEY=VALUE")
-	}
-
-	key := strings.TrimSpace(parts[0])
-	value := strings.TrimSpace(parts[1])
-
-	// Validate key format (basic validation)
-	if key == "" {
-		return fmt.Errorf("empty key")
-	}
-
-	// Remove quotes from value if present
-	if len(value) >= 2 {
-		if (strings.HasPrefix(value, "\"") && strings.HasSuffix(value, "\"")) ||
-			(strings.HasPrefix(value, "'") && strings.HasSuffix(value, "'")) {
-			value = value[1 : len(value)-1]
-		}
-	}
-
-	em.envVars[key] = value
-	return nil
-}
 
 // InterpolateString performs variable interpolation on a string using ${VAR} syntax
 func (em *EnvironmentManager) InterpolateString(input string) string {
