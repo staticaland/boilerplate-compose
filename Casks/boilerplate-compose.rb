@@ -2,7 +2,7 @@
 cask "boilerplate-compose" do
   desc ""
   homepage ""
-  version "1.4.0"
+  version "1.5.0"
 
   livecheck do
     skip "Auto-generated on release."
@@ -12,23 +12,23 @@ cask "boilerplate-compose" do
 
   on_macos do
     on_intel do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.4.0/boilerplate-compose_1.4.0_darwin_amd64.tar.gz"
-      sha256 "670253ca6a83cee51d7742a9694b6b92bf3a555b93d8526e5e95b1cbd4c67c47"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.5.0/boilerplate-compose_1.5.0_darwin_amd64.tar.gz"
+      sha256 "bd4d1a22fb90cd5bdd57432a1bd1b76ede367164cbf52a81f88022434579f7af"
     end
     on_arm do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.4.0/boilerplate-compose_1.4.0_darwin_arm64.tar.gz"
-      sha256 "722a921dd7cb1eafaf3dd394adc0a1bd8666ae747984b547a92734f5ae107063"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.5.0/boilerplate-compose_1.5.0_darwin_arm64.tar.gz"
+      sha256 "d55835078ae16291139df789a0d07cdf2789c724da91b496f33787b58ae644f4"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.4.0/boilerplate-compose_1.4.0_linux_amd64.tar.gz"
-      sha256 "27a17553e510dff2ff15232ca113948ab2f876437a010b30b9db415456f179cd"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.5.0/boilerplate-compose_1.5.0_linux_amd64.tar.gz"
+      sha256 "d5868ab576c4675af38156813a72bcb61d7b8b18034407ccd9414496ae9038ae"
     end
     on_arm do
-      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.4.0/boilerplate-compose_1.4.0_linux_arm64.tar.gz"
-      sha256 "a3662c99602fa5a0184ea76bd84c7d5b5a948734f760438dcc28eb24af594aa6"
+      url "https://github.com/staticaland/boilerplate-compose/releases/download/v1.5.0/boilerplate-compose_1.5.0_linux_arm64.tar.gz"
+      sha256 "bd9b76c5169b3c4560bdecb516ff173dbc4559856b8325ef4e834c0c711da0d4"
     end
   end
 
